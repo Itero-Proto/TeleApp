@@ -157,16 +157,12 @@
                         name: document.getElementById('name').value,
                         feedback: feedbackInput.value,
                         rating: ratingInput.value,
-                        userId: user.id, // Добавляем ID пользователя для идентификации
+                        userId: user.id,
                         username: user.username,
                     };
-
-                    // Отправляем данные боту
+                    console.log("Отправка данных:", formData);  // Логирование
                     tg.sendData(JSON.stringify(formData));
-
-                    // Показываем уведомление и закрываем приложение
                     tg.showAlert('Спасибо! Ваша анкета отправлена.');
-                    // tg.close(); // Раскомментируйте, если хотите закрывать окно после отправки
                 });
 
                 // Обработчик для кнопки "Закрыть" внутри HTML
