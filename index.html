@@ -153,23 +153,55 @@
 
                 // Обработчик нажатия на главную кнопку
                 tg.MainButton.onClick(function () {
+                    // 1. Проверка доступности WebApp API
+                    if (!window.Telegram || !window.Telegram.WebApp || !window.Telegram.WebApp.sendData) {
+                        console.error("Telegram WebApp API не доступен!");
+                        tg.showAlert('Ошибка: Не могу отправить данные');
+                        return;
+                    }
+
+                    // 2. Безопасное формирование данных
                     const formData = {
-                        name: document.getElementById('name').value,
-                        feedback: document.getElementById('feedback').value,
+                        name: document.getElementById('name').value.trim(),
+                        feedback: document.getElementById('feedback').value.trim(),
                         rating: document.getElementById('rating').value,
-                        userId: tg.initDataUnsafe.user.id,
-                        username: tg.initDataUnsafe.user.username || 'нет'
+                        userId: tg.initDataUnsafe?.user?.id || 0,
+                        username: tg.initDataUnsafe?.user?.username || 'нет'
                     };
 
-                    console.log("Отправляемые данные:", formData); // Логи в консоль браузера
+                    // 3. Валидация данных
+                    if (!formData.feedback || !formData.rating) {
+                        tg.showAlert('Пожалуйста, заполните все поля');
+                        return;
+                    }
 
+                    console.log("Отправляемые данные:", formData);
+
+                    // 4. Безопасная отправка
                     try {
-                        tg.sendData(JSON.stringify(formData));
-                        console.log("Данные отправлены через tg.sendData()");
-                        tg.showAlert('Спасибо! Ваша анкета отправлена.');
+                        // 5. Кодирование данных
+                        const jsonData = JSON.stringify(formData);
+                        const encodedData = encodeURIComponent(jsonData);
+
+                        // 6. Отправка с таймаутом
+                        const sendPromise = new Promise((resolve, reject) => {
+                            tg.sendData(encodedData);
+                            setTimeout(() => resolve(), 500);
+                        });
+
+                        // 7. Обработка результата
+                        sendPromise.then(() => {
+                            console.log("Данные успешно отправлены");
+                            tg.showAlert('Спасибо! Ваша анкета отправлена.');
+                            tg.close(); // Закрываем WebApp после отправки
+                        }).catch(e => {
+                            console.error("Ошибка отправки:", e);
+                            tg.showAlert('Ошибка при отправке: ' + e.message);
+                        });
+
                     } catch (e) {
-                        console.error("Ошибка отправки:", e);
-                        tg.showAlert('Ошибка отправки: ' + e.message);
+                        console.error("Критическая ошибка:", e);
+                        tg.showAlert('Системная ошибка: ' + e.message);
                     }
                 });
 
