@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,32 +18,39 @@
             color: var(--tg-theme-text-color);
             background-color: var(--tg-theme-bg-color);
         }
+
         /* Стили для полей ввода, чтобы они соответствовали теме Telegram */
         .form-input {
             background-color: var(--tg-theme-secondary-bg-color, #f3f4f6);
             color: var(--tg-theme-text-color);
             border: 1px solid var(--tg-theme-hint-color, #d1d5db);
         }
+
         .form-input:focus {
             border-color: var(--tg-theme-button-color, #3b82f6);
             outline: none;
         }
+
         label {
-             color: var(--tg-theme-hint-color, #6b7280);
+            color: var(--tg-theme-hint-color, #6b7280);
         }
     </style>
 </head>
+
 <body class="overflow-y-auto">
 
     <div id="app" class="min-h-screen flex flex-col items-center p-4 transition-all duration-500">
-        
+
         <!-- Сообщение, если приложение открыто не в Telegram -->
         <div id="not-in-telegram" class="hidden text-center p-6 bg-white rounded-xl shadow-lg max-w-md mx-auto">
-            <svg class="mx-auto h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <svg class="mx-auto h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <h2 class="mt-4 text-xl font-bold text-gray-800">Ошибка</h2>
-            <p class="mt-2 text-gray-600">Это приложение предназначено для работы внутри Telegram. Пожалуйста, откройте его через вашего Telegram-бота.</p>
+            <p class="mt-2 text-gray-600">Это приложение предназначено для работы внутри Telegram. Пожалуйста, откройте
+                его через вашего Telegram-бота.</p>
         </div>
 
         <!-- Основной контент приложения-анкеты -->
@@ -55,15 +63,19 @@
                 <form id="feedback-form" class="space-y-4">
                     <div>
                         <label for="name" class="block text-sm font-medium mb-1">Ваше имя</label>
-                        <input type="text" id="name" name="name" class="form-input w-full p-2 rounded-lg transition-colors duration-200">
+                        <input type="text" id="name" name="name"
+                            class="form-input w-full p-2 rounded-lg transition-colors duration-200">
                     </div>
                     <div>
                         <label for="feedback" class="block text-sm font-medium mb-1">Ваш отзыв</label>
-                        <textarea id="feedback" name="feedback" rows="4" class="form-input w-full p-2 rounded-lg transition-colors duration-200" placeholder="Что вам понравилось или не понравилось?"></textarea>
+                        <textarea id="feedback" name="feedback" rows="4"
+                            class="form-input w-full p-2 rounded-lg transition-colors duration-200"
+                            placeholder="Что вам понравилось или не понравилось?"></textarea>
                     </div>
-                     <div>
+                    <div>
                         <label for="rating" class="block text-sm font-medium mb-1">Оцените наш сервис</label>
-                        <select id="rating" name="rating" class="form-input w-full p-2 rounded-lg transition-colors duration-200">
+                        <select id="rating" name="rating"
+                            class="form-input w-full p-2 rounded-lg transition-colors duration-200">
                             <option value="">Выберите оценку...</option>
                             <option value="5">⭐⭐⭐⭐⭐ (Отлично)</option>
                             <option value="4">⭐⭐⭐⭐ (Хорошо)</option>
@@ -73,13 +85,14 @@
                         </select>
                     </div>
                 </form>
-                
+
                 <!-- Кнопка для закрытия -->
-                 <button id="close-button" class="w-full bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors mt-6">
+                <button id="close-button"
+                    class="w-full bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors mt-6">
                     Закрыть
                 </button>
             </div>
-            
+
             <div class="text-center mt-4 text-xs text-gray-400">
                 <p>Нажмите "Отправить" ниже, чтобы завершить.</p>
             </div>
@@ -95,17 +108,17 @@
             const appContainer = document.getElementById('app');
             const mainContent = document.getElementById('main-content');
             const notInTelegramView = document.getElementById('not-in-telegram');
-            
+
             // Проверяем, открыто ли приложение в Telegram
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 mainContent.classList.remove('hidden');
-                
+
                 // Настраиваем интерфейс
                 tg.ready();
                 appContainer.style.backgroundColor = tg.themeParams.bg_color || '#f3f4f6';
 
                 const user = tg.initDataUnsafe.user;
-                
+
                 // Предзаполняем имя пользователя из Telegram
                 const nameInput = document.getElementById('name');
                 if (user.first_name) {
@@ -123,15 +136,18 @@
                 const feedbackInput = document.getElementById('feedback');
                 const ratingInput = document.getElementById('rating');
 
-                // Функция для проверки заполненности формы
                 const checkFormValidity = () => {
-                    if (feedbackInput.value.trim() !== '' && ratingInput.value !== '') {
+                    const isFeedbackValid = feedbackInput.value.trim().length >= 10; // Минимум 10 символов
+                    const isRatingValid = ratingInput.value !== '';
+
+                    if (isFeedbackValid && isRatingValid) {
                         tg.MainButton.enable();
+                        tg.MainButton.setParams({ color: tg.themeParams.button_color || '#7360F2' });
                     } else {
                         tg.MainButton.disable();
                     }
                 };
-                
+
                 // Проверяем форму при любом изменении
                 form.addEventListener('input', checkFormValidity);
 
@@ -144,10 +160,10 @@
                         userId: user.id, // Добавляем ID пользователя для идентификации
                         username: user.username,
                     };
-                    
+
                     // Отправляем данные боту
                     tg.sendData(JSON.stringify(formData));
-                    
+
                     // Показываем уведомление и закрываем приложение
                     tg.showAlert('Спасибо! Ваша анкета отправлена.');
                     // tg.close(); // Раскомментируйте, если хотите закрывать окно после отправки
@@ -166,4 +182,5 @@
     </script>
 
 </body>
+
 </html>
