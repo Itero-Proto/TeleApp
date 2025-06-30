@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Приложение для Telegram Бота</title>
+    <title>Анкета для Telegram Бота</title>
     <!-- Подключение Tailwind CSS для стилей -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Скрипт для Telegram Web App -->
@@ -17,21 +17,27 @@
             color: var(--tg-theme-text-color);
             background-color: var(--tg-theme-bg-color);
         }
-        .card {
+        /* Стили для полей ввода, чтобы они соответствовали теме Telegram */
+        .form-input {
             background-color: var(--tg-theme-secondary-bg-color, #f3f4f6);
+            color: var(--tg-theme-text-color);
+            border: 1px solid var(--tg-theme-hint-color, #d1d5db);
         }
-        .main-button {
-             background-color: var(--tg-theme-button-color);
-             color: var(--tg-theme-button-text-color);
+        .form-input:focus {
+            border-color: var(--tg-theme-button-color, #3b82f6);
+            outline: none;
+        }
+        label {
+             color: var(--tg-theme-hint-color, #6b7280);
         }
     </style>
 </head>
-<body class="overflow-hidden">
+<body class="overflow-y-auto">
 
-    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-100 transition-all duration-500">
+    <div id="app" class="min-h-screen flex flex-col items-center p-4 transition-all duration-500">
         
         <!-- Сообщение, если приложение открыто не в Telegram -->
-        <div id="not-in-telegram" class="hidden text-center p-6 bg-white rounded-xl shadow-lg">
+        <div id="not-in-telegram" class="hidden text-center p-6 bg-white rounded-xl shadow-lg max-w-md mx-auto">
             <svg class="mx-auto h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
@@ -39,40 +45,43 @@
             <p class="mt-2 text-gray-600">Это приложение предназначено для работы внутри Telegram. Пожалуйста, откройте его через вашего Telegram-бота.</p>
         </div>
 
-        <!-- Основной контент приложения -->
+        <!-- Основной контент приложения-анкеты -->
         <div id="main-content" class="w-full max-w-md mx-auto hidden">
-            <div class="bg-white rounded-xl shadow-2xl p-6 text-center">
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">Добро пожаловать!</h1>
-                <p class="text-gray-500 mb-6">Это ваше веб-приложение в Telegram.</p>
+            <div class="bg-white rounded-xl shadow-2xl p-6">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2 text-center">Анкета обратной связи</h1>
+                <p class="text-gray-500 mb-6 text-center">Пожалуйста, ответьте на несколько вопросов.</p>
 
-                <!-- Карточка с информацией о пользователе -->
-                <div class="card p-4 rounded-lg text-left mb-6 border border-gray-200">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-3">Данные пользователя:</h2>
-                    <div id="user-info-loading" class="text-gray-500">
-                        Загрузка данных...
+                <!-- Форма анкеты -->
+                <form id="feedback-form" class="space-y-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium mb-1">Ваше имя</label>
+                        <input type="text" id="name" name="name" class="form-input w-full p-2 rounded-lg transition-colors duration-200">
                     </div>
-                    <div id="user-info" class="hidden space-y-2">
-                        <p><strong>Имя:</strong> <span id="user-name" class="font-mono"></span></p>
-                        <p><strong>Никнейм:</strong> <span id="user-username" class="font-mono"></span></p>
-                        <p><strong>ID:</strong> <span id="user-id" class="font-mono"></span></p>
-                        <p><strong>Язык:</strong> <span id="user-language" class="font-mono"></span></p>
+                    <div>
+                        <label for="feedback" class="block text-sm font-medium mb-1">Ваш отзыв</label>
+                        <textarea id="feedback" name="feedback" rows="4" class="form-input w-full p-2 rounded-lg transition-colors duration-200" placeholder="Что вам понравилось или не понравилось?"></textarea>
                     </div>
-                </div>
-
-                <!-- Интерактивные элементы -->
-                <div class="space-y-4">
-                     <button id="main-action-button" class="w-full main-button font-bold py-3 px-4 rounded-lg shadow-md hover:opacity-90 transition-opacity">
-                        Главная кнопка
-                    </button>
-                    <button id="close-button" class="w-full bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors">
-                        Закрыть
-                    </button>
-                </div>
+                     <div>
+                        <label for="rating" class="block text-sm font-medium mb-1">Оцените наш сервис</label>
+                        <select id="rating" name="rating" class="form-input w-full p-2 rounded-lg transition-colors duration-200">
+                            <option value="">Выберите оценку...</option>
+                            <option value="5">⭐⭐⭐⭐⭐ (Отлично)</option>
+                            <option value="4">⭐⭐⭐⭐ (Хорошо)</option>
+                            <option value="3">⭐⭐⭐ (Удовлетворительно)</option>
+                            <option value="2">⭐⭐ (Плохо)</option>
+                            <option value="1">⭐ (Очень плохо)</option>
+                        </select>
+                    </div>
+                </form>
+                
+                <!-- Кнопка для закрытия -->
+                 <button id="close-button" class="w-full bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors mt-6">
+                    Закрыть
+                </button>
             </div>
             
             <div class="text-center mt-4 text-xs text-gray-400">
-                <p>Вы можете настроить это приложение для своих задач.</p>
-                <p>Как подключить: Создайте бота через @BotFather, получите токен, добавьте URL этого приложения командой /setmenubutton.</p>
+                <p>Нажмите "Отправить" ниже, чтобы завершить.</p>
             </div>
         </div>
 
@@ -91,57 +100,63 @@
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 mainContent.classList.remove('hidden');
                 
-                // Настраиваем цвета темы из Telegram
+                // Настраиваем интерфейс
                 tg.ready();
                 appContainer.style.backgroundColor = tg.themeParams.bg_color || '#f3f4f6';
 
-                // Получаем и отображаем данные пользователя
                 const user = tg.initDataUnsafe.user;
-                const userInfoDiv = document.getElementById('user-info');
-                const loadingDiv = document.getElementById('user-info-loading');
                 
-                document.getElementById('user-name').textContent = `${user.first_name} ${user.last_name || ''}`.trim();
-                document.getElementById('user-username').textContent = user.username ? `@${user.username}` : 'не указан';
-                document.getElementById('user-id').textContent = user.id;
-                document.getElementById('user-language').textContent = user.language_code;
-                
-                loadingDiv.classList.add('hidden');
-                userInfoDiv.classList.remove('hidden');
+                // Предзаполняем имя пользователя из Telegram
+                const nameInput = document.getElementById('name');
+                if (user.first_name) {
+                    nameInput.value = `${user.first_name} ${user.last_name || ''}`.trim();
+                }
 
-                // --- Работа с основными кнопками Telegram ---
+                // --- Настройка главной кнопки Telegram ---
 
-                // Настраиваем главную кнопку, которая видна под полем ввода
-                tg.MainButton.setText('Отправить данные');
+                // Настраиваем главную кнопку для отправки анкеты
+                tg.MainButton.setText('Отправить анкету');
                 tg.MainButton.show();
+                tg.MainButton.disable(); // Кнопка неактивна, пока форма не заполнена
+
+                const form = document.getElementById('feedback-form');
+                const feedbackInput = document.getElementById('feedback');
+                const ratingInput = document.getElementById('rating');
+
+                // Функция для проверки заполненности формы
+                const checkFormValidity = () => {
+                    if (feedbackInput.value.trim() !== '' && ratingInput.value !== '') {
+                        tg.MainButton.enable();
+                    } else {
+                        tg.MainButton.disable();
+                    }
+                };
+                
+                // Проверяем форму при любом изменении
+                form.addEventListener('input', checkFormValidity);
 
                 // Обработчик нажатия на главную кнопку
                 tg.MainButton.onClick(function () {
-                    const dataToSend = {
-                        userId: user.id,
+                    const formData = {
+                        name: document.getElementById('name').value,
+                        feedback: feedbackInput.value,
+                        rating: ratingInput.value,
+                        userId: user.id, // Добавляем ID пользователя для идентификации
                         username: user.username,
-                        action: 'main_button_click'
                     };
-                    // Эта функция отправляет данные вашему боту
-                    tg.sendData(JSON.stringify(dataToSend));
                     
-                    // Опционально: показать уведомление
-                    tg.showAlert(`Данные для пользователя ${user.first_name} отправлены!`);
+                    // Отправляем данные боту
+                    tg.sendData(JSON.stringify(formData));
+                    
+                    // Показываем уведомление и закрываем приложение
+                    tg.showAlert('Спасибо! Ваша анкета отправлена.');
+                    // tg.close(); // Раскомментируйте, если хотите закрывать окно после отправки
                 });
 
                 // Обработчик для кнопки "Закрыть" внутри HTML
                 document.getElementById('close-button').addEventListener('click', function () {
                     tg.close();
                 });
-                
-                // Пример кнопки внутри веб-страницы
-                document.getElementById('main-action-button').addEventListener('click', function() {
-                    tg.showConfirm("Вы уверены, что хотите выполнить это действие?", (confirmed) => {
-                        if (confirmed) {
-                           tg.showAlert('Вы подтвердили действие!');
-                        }
-                    });
-                });
-
 
             } else {
                 // Показываем сообщение, что нужно открыть приложение в Telegram
